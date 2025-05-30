@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8" />
+    <title>COVID-19 - Dane statystyczne</title>
+
+    <!-- Import Bootstrap 5 do stylizacji -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Stylizacja własna -->
+    <style>
+        body {
+            background-color: #ffe6f0;
+            font-family: 'Segoe UI', sans-serif;
+            color: #6c1244;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 2.8rem;
+            font-weight: bold;
+            color: #9b1454;
+        }
+
+        h3 {
+            text-align: center;
+            font-size: 1.3rem;
+            color: #b03060;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px auto;
+        }
+
+        .form-label {
+            font-weight: bold;
+            color: #7c1147;
+        }
+
+        .chart-container {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffeaf7;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 90%;
+        }
+
+        .table-container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 90%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* Stylizacja nagłówka tabeli */
+        .table thead {
+            background-color: #c71585;
+            color: white;
+        }
+
+        /* Wiersze naprzemienne: biały i bardzo jasny róż */
+        .table tbody tr:nth-child(odd) td {
+            background-color: #ffffff !important;
+        }
+
+        .table tbody tr:nth-child(even) td {
+            background-color: #fff7fb !important;
+        }
+
+        /* Przycisk stylizowany na liliowy */
+        .btn-lilac {
+            background-color: #d1b3ea;
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-lilac:hover,
+        .btn-lilac:focus {
+            background-color: #c5a0f5;
+            color: white;
+            outline: none;
+            box-shadow: 0 0 8px rgba(138, 82, 195, 0.7);
+        }
+
+        footer {
+            text-align: center;
+            margin: 40px 0 20px;
+            color: #8b006b;
+            font-size: 0.95rem;
+            border-top: 1px solid #d95c9d;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Główne nagłówki strony -->
+    <h1>COVID-19 – dane za rok {{ selected_year }}</h1>
+    <h3>Interaktywna aplikacja do analizy danych pandemii COVID-19</h3>
+
+    <!-- Formularz wyboru roku i kraju (filtrowanie danych) -->
+    <form method="get">
+        <div>
+            <label for="rok" class="form-label">Wybierz rok:</label>
+            <select name="rok" id="rok" class="form-select">
+                {% for rok in lata %}
+                    <option value="{{ rok }}" {% if selected_year == rok|string %}selected{% endif %}>{{ rok }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="kraj" class="form-label">Wybierz kraj:</label>
+            <select name="kraj" id="kraj" class="form-select">
+                {% for kraj in kraje %}
+                    <option value="{{ kraj }}" {% if selected_country == kraj %}selected{% endif %}>{{ kraj }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Przycisk zatwierdzający wybór -->
+        <div class="align-self-end">
+            <button type="submit" class="btn btn-lilac">Zastosuj</button>
+        </div>
+    </form>
+
+    <!-- Wykres słupkowy (ilości zakażeń, zgonów, wyzdrowień) -->
+    <div class="chart-container">
+        {{ wykres_slupkowy|safe }}
+    </div>
+
+    <!-- Wykres mapowy (rozmieszczenie geograficzne przypadków) -->
+    <div class="chart-container">
+        {{ wykres_mapa|safe }}
+    </div>
+
+    <!-- Tabela prezentująca dane statystyczne dla wybranych krajów -->
+    <div class="table-container">
+        <h3>Podsumowanie danych COVID-19</h3>
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Kraj</th>
+                        <th>Zakażenia</th>
+                        <th>Zgony</th>
+                        <th>Wyzdrowienia</th>
+                        <th>% Zgonów</th>
+                        <th>% Wyzdrowień</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in tabela %}
+                    <tr>
+                        <td>{{ row.country_region }}</td>
+                        <td>{{ row.confirmed }}</td>
+                        <td>{{ row.deaths }}</td>
+                        <td>{{ row.recovered }}</td>
+                        <td>{{ row['% zgonów'] }}%</td>
+                        <td>{{ row['% wyzdrowień'] }}%</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Stopka informacyjna -->
+    <footer>
+        Projekt edukacyjny | 2025r. | Autorki: Anna Tądel i Łucja Wesołowska
+    </footer>
+
+</body>
+</html>
