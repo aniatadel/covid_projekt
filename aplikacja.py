@@ -145,4 +145,4 @@ def index():
 
 # Uruchomienie aplikacji w trybie debugowania
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run
